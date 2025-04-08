@@ -1,7 +1,5 @@
 package cidade.resource;
 
-//package com.rossatti.quarkus_pjc_2025.cidade.resources;
-
 import cidade.dtos.CidadeRequest;
 import cidade.dtos.CidadeResponse;
 import cidade.services.CidadeService;
@@ -10,9 +8,6 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
-//import com.rossatti.quarkus_pjc_2025.cidade.dtos.*;
-//import com.rossatti.quarkus_pjc_2025.cidade.services.CidadeService;
 
 import java.util.List;
 
@@ -32,9 +27,13 @@ public class CidadeResource {
     }
 
     @GET
-    public List<CidadeResponse> list() {
-        return service.findAll();
+    public List<CidadeResponse> list(@QueryParam("page") @DefaultValue("0") int page,
+                                     @QueryParam("size") @DefaultValue("10") int size) {
+        return service.findAll(page, size);
     }
+//    public List<CidadeResponse> list() {
+//        return service.findAll();
+//    }
 
     @GET
     @Path("/{id}")

@@ -1,6 +1,6 @@
 package cidade.entities;
-//package com.rossatti.quarkus_pjc_2025.entities;
 
+import endereco.entities.Endereco;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;

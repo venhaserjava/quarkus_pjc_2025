@@ -1,9 +1,5 @@
 package cidade.mappers;
 
-//package com.rossatti.quarkus_pjc_2025.cidade.mappers;
-//import com.rossatti.quarkus_pjc_2025.cidade.dtos.*;
-//import com.rossatti.quarkus_pjc_2025.cidade.entities.Cidade;
-
 import cidade.dtos.CidadeRequest;
 import cidade.dtos.CidadeResponse;
 import cidade.entities.Cidade;
