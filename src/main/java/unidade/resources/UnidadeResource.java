@@ -1,8 +1,6 @@
 package unidade.resources;
 
 
-//package com.rossatti.quarkus_pjc_2025.unidade.resources;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -10,9 +8,6 @@ import jakarta.ws.rs.core.*;
 import unidade.dtos.UnidadeRequest;
 import unidade.dtos.UnidadeResponse;
 import unidade.services.UnidadeService;
-
-//import com.rossatti.quarkus_pjc_2025.unidade.dtos.*;
-//import com.rossatti.quarkus_pjc_2025.unidade.services.UnidadeService;
 
 import java.util.List;
 
@@ -30,11 +25,17 @@ public class UnidadeResource {
                 .entity(service.create(request))
                 .build();
     }
-
     @GET
-    public List<UnidadeResponse> list() {
-        return service.findAll();
+    public Response list(@QueryParam("page") @DefaultValue("0") int page,
+                         @QueryParam("size") @DefaultValue("10") int size) {
+        return Response.ok(service.findAll(page, size)).build();
     }
+
+//
+//    @GET
+//    public List<UnidadeResponse> list() {
+//        return service.findAll();
+//    }
 
     @GET
     @Path("/{id}")

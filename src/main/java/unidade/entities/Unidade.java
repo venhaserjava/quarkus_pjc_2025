@@ -1,7 +1,5 @@
 package unidade.entities;
 
-//package com.rossatti.quarkus_pjc_2025.unidade.entities;
-
 import jakarta.persistence.*;
 import lombok.*;
 

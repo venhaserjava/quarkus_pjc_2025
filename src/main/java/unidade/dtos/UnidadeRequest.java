@@ -1,7 +1,5 @@
 package unidade.dtos;
 
-//package com.rossatti.quarkus_pjc_2025.unidade.dtos;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
