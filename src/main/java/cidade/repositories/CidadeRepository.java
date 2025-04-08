@@ -13,6 +13,9 @@ public class CidadeRepository implements PanacheRepository<Cidade> {
         return findAll().page(Page.of(page, size));
     }
 
+    public boolean existsByNomeAndUf(String nome, String uf) {
+        return find("nome = ?1 and uf = ?2", nome, uf).firstResultOptional().isPresent();
+    }
 //    public PanacheQuery<Cidade> findAll(int page, int size) {
 //        return findAll(page, size);
 //        return findAll(Page.of(page, size));
