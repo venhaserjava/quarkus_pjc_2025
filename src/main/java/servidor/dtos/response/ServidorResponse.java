@@ -15,4 +15,12 @@ public record ServidorResponse(
         String bairro,
         String cidadeNome,
         String foto
-) {}
+) {
+    public ServidorResponse withFoto(String fotoUrl) {
+        return new ServidorResponse(
+                id, nome, mae, pai, sexo, dataNascimento,
+                tipoLogradouro, logradouro, numero, bairro,
+                cidadeNome, fotoUrl
+        );
+    }
+}
