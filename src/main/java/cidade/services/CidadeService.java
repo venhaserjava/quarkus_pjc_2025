@@ -1,57 +1,57 @@
 package cidade.services;
-//package com.rossatti.quarkus_pjc_2025.services;
-//import com.rossatti.quarkus_pjc_2025.entities.Cidade;
-//import com.rossatti.quarkus_pjc_2025.repositories.CidadeRepository;
+//package com.rossatti.quarkus_pjc_2025.cidade.services;
+import cidade.dtos.CidadeRequest;
+import cidade.dtos.CidadeResponse;
 import cidade.entities.Cidade;
+import cidade.mappers.CidadeMapper;
 import cidade.repositories.CidadeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+//import com.rossatti.quarkus_pjc_2025.cidade.dtos.*;
+//import com.rossatti.quarkus_pjc_2025.cidade.entities.Cidade;
+//import com.rossatti.quarkus_pjc_2025.cidade.mappers.CidadeMapper;
+//import com.rossatti.quarkus_pjc_2025.cidade.repositories.CidadeRepository;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class CidadeService {
 
-    @Inject
-    CidadeRepository cidadeRepository;
+    private final CidadeRepository repository;
 
-    public List<Cidade> findAll() {
-        return cidadeRepository.listAll();
-    }
-
-    public Optional<Cidade> findById(Long id) {
-        return cidadeRepository.findByIdOptional(id);
+    public CidadeService(CidadeRepository repository) {
+        this.repository = repository;
     }
 
     @Transactional
-    public Cidade create(Cidade cidade) {
-        cidadeRepository.persist(cidade);
-        return cidade;
+    public CidadeResponse create(CidadeRequest request) {
+        Cidade cidade = CidadeMapper.toEntity(request);
+        repository.persist(cidade);
+        return CidadeMapper.toResponse(cidade);
+    }
+
+    public List<CidadeResponse> findAll() {
+        return repository.listAll().stream()
+                .map(CidadeMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public CidadeResponse findById(Long id) {
+        return CidadeMapper.toResponse(repository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Cidade not found")));
     }
 
     @Transactional
-    public Cidade update(Long id, Cidade updated) {
-        Cidade cidade = cidadeRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("City not found"));
-
-        cidade.setNome(updated.getNome());
-        cidade.setUf(updated.getUf());
-        return cidade;
+    public CidadeResponse update(Long id, CidadeRequest request) {
+        Cidade cidade = repository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Cidade not found"));
+        CidadeMapper.updateEntity(cidade, request);
+        return CidadeMapper.toResponse(cidade);
     }
 
     @Transactional
     public void delete(Long id) {
-        boolean deleted = cidadeRepository.deleteById(id);
-        if (!deleted) {
-            throw new NotFoundException("City not found");
-        }
-    }
-
-    public static class NotFoundException extends RuntimeException {
-        public NotFoundException(String message) {
-            super(message);
-        }
+        repository.deleteById(id);
     }
 }

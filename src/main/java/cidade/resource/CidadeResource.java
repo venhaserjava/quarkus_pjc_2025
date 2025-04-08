@@ -1,15 +1,19 @@
 package cidade.resource;
-//package com.rossatti.quarkus_pjc_2025.resources;
-//import com.rossatti.quarkus_pjc_2025.entities.Cidade;
-//import com.rossatti.quarkus_pjc_2025.services.CidadeService;
-import cidade.entities.Cidade;
+
+//package com.rossatti.quarkus_pjc_2025.cidade.resources;
+
+import cidade.dtos.CidadeRequest;
+import cidade.dtos.CidadeResponse;
 import cidade.services.CidadeService;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.net.URI;
+//import com.rossatti.quarkus_pjc_2025.cidade.dtos.*;
+//import com.rossatti.quarkus_pjc_2025.cidade.services.CidadeService;
+
 import java.util.List;
 
 @Path("/cidades")
@@ -18,35 +22,36 @@ import java.util.List;
 public class CidadeResource {
 
     @Inject
-    CidadeService cidadeService;
+    CidadeService service;
+
+    @POST
+    public Response create(@Valid CidadeRequest request) {
+        return Response.status(Response.Status.CREATED)
+                .entity(service.create(request))
+                .build();
+    }
 
     @GET
-    public List<Cidade> getAll() {
-        return cidadeService.findAll();
+    public List<CidadeResponse> list() {
+        return service.findAll();
     }
 
     @GET
     @Path("/{id}")
-    public Cidade getById(@PathParam("id") Long id) {
-        return cidadeService.findById(id)
-                .orElseThrow(() -> new NotFoundException("City not found"));
-    }
-
-    @POST
-    public Response create(Cidade cidade) {
-        Cidade created = cidadeService.create(cidade);
-        return Response.created(URI.create("/cidades/" + created.getId())).entity(created).build();
+    public CidadeResponse findById(@PathParam("id") Long id) {
+        return service.findById(id);
     }
 
     @PUT
     @Path("/{id}")
-    public Cidade update(@PathParam("id") Long id, Cidade cidade) {
-        return cidadeService.update(id, cidade);
+    public CidadeResponse update(@PathParam("id") Long id, @Valid CidadeRequest request) {
+        return service.update(id, request);
     }
 
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") Long id) {
-        cidadeService.delete(id);
+    public Response delete(@PathParam("id") Long id) {
+        service.delete(id);
+        return Response.noContent().build();
     }
 }
