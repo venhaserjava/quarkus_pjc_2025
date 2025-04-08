@@ -1,16 +1,18 @@
 package endereco.resource;
 
-//package com.rossatti.quarkus_pjc_2025.resources;
-//import com.rossatti.quarkus_pjc_2025.entities.Endereco;
-//import com.rossatti.quarkus_pjc_2025.services.EnderecoService;
-import endereco.entities.Endereco;
+//package com.rossatti.quarkus_pjc_2025.endereco.resources;
+
+import endereco.dtos.EnderecoRequest;
+import endereco.dtos.EnderecoResponse;
 import endereco.services.EnderecoService;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.*;
 
-import java.net.URI;
+//import com.rossatti.quarkus_pjc_2025.endereco.dtos.*;
+//import com.rossatti.quarkus_pjc_2025.endereco.services.EnderecoService;
+
 import java.util.List;
 
 @Path("/enderecos")
@@ -19,35 +21,36 @@ import java.util.List;
 public class EnderecoResource {
 
     @Inject
-    EnderecoService enderecoService;
+    EnderecoService service;
+
+    @POST
+    public Response create(@Valid EnderecoRequest request) {
+        return Response.status(Response.Status.CREATED)
+                .entity(service.create(request))
+                .build();
+    }
 
     @GET
-    public List<Endereco> getAll() {
-        return enderecoService.findAll();
+    public List<EnderecoResponse> list() {
+        return service.findAll();
     }
 
     @GET
     @Path("/{id}")
-    public Endereco getById(@PathParam("id") Long id) {
-        return enderecoService.findById(id)
-                .orElseThrow(() -> new NotFoundException("Address not found"));
-    }
-
-    @POST
-    public Response create(Endereco endereco) {
-        Endereco created = enderecoService.create(endereco);
-        return Response.created(URI.create("/enderecos/" + created.getId())).entity(created).build();
+    public EnderecoResponse findById(@PathParam("id") Long id) {
+        return service.findById(id);
     }
 
     @PUT
     @Path("/{id}")
-    public Endereco update(@PathParam("id") Long id, Endereco endereco) {
-        return enderecoService.update(id, endereco);
+    public EnderecoResponse update(@PathParam("id") Long id, @Valid EnderecoRequest request) {
+        return service.update(id, request);
     }
 
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") Long id) {
-        enderecoService.delete(id);
+    public Response delete(@PathParam("id") Long id) {
+        service.delete(id);
+        return Response.noContent().build();
     }
 }

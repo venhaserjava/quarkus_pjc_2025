@@ -1,62 +1,68 @@
 package endereco.services;
+//package com.rossatti.quarkus_pjc_2025.endereco.services;
 
-//package com.rossatti.quarkus_pjc_2025.services;
-//import com.rossatti.quarkus_pjc_2025.entities.Endereco;
-//import com.rossatti.quarkus_pjc_2025.repositories.EnderecoRepository;
+import cidade.repositories.CidadeRepository;
+import endereco.dtos.EnderecoRequest;
+import endereco.dtos.EnderecoResponse;
 import endereco.entities.Endereco;
+import endereco.mappers.EnderecoMapper;
 import endereco.repository.EnderecoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+//import com.rossatti.quarkus_pjc_2025.endereco.dtos.*;
+//import com.rossatti.quarkus_pjc_2025.endereco.entities.Endereco;
+//import com.rossatti.quarkus_pjc_2025.endereco.mappers.EnderecoMapper;
+//import com.rossatti.quarkus_pjc_2025.endereco.repositories.EnderecoRepository;
+//import com.rossatti.quarkus_pjc_2025.cidade.repositories.CidadeRepository;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class EnderecoService {
 
-    @Inject
-    EnderecoRepository enderecoRepository;
+    private final EnderecoRepository repository;
+    private final CidadeRepository cidadeRepository;
 
-    public List<Endereco> findAll() {
-        return enderecoRepository.listAll();
-    }
-
-    public Optional<Endereco> findById(Long id) {
-        return enderecoRepository.findByIdOptional(id);
+    public EnderecoService(EnderecoRepository repository, CidadeRepository cidadeRepository) {
+        this.repository = repository;
+        this.cidadeRepository = cidadeRepository;
     }
 
     @Transactional
-    public Endereco create(Endereco endereco) {
-        enderecoRepository.persist(endereco);
-        return endereco;
+    public EnderecoResponse create(EnderecoRequest request) {
+        var cidade = cidadeRepository.findByIdOptional(request.cidadeId())
+                .orElseThrow(() -> new RuntimeException("Cidade not found"));
+        Endereco endereco = EnderecoMapper.toEntity(request, cidade);
+        repository.persist(endereco);
+        return EnderecoMapper.toResponse(endereco);
+    }
+
+    public List<EnderecoResponse> findAll() {
+        return repository.listAll().stream()
+                .map(EnderecoMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public EnderecoResponse findById(Long id) {
+        return EnderecoMapper.toResponse(repository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Endereco not found")));
     }
 
     @Transactional
-    public Endereco update(Long id, Endereco updated) {
-        Endereco endereco = enderecoRepository.findByIdOptional(id)
-                .orElseThrow(() -> new NotFoundException("Address not found"));
-
-        endereco.setTipoLogradouro(updated.getTipoLogradouro());
-        endereco.setLogradouro(updated.getLogradouro());
-        endereco.setNumero(updated.getNumero());
-        endereco.setBairro(updated.getBairro());
-        endereco.setCidade(updated.getCidade());
-
-        return endereco;
+    public EnderecoResponse update(Long id, EnderecoRequest request) {
+        var endereco = repository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Endereco not found"));
+        var cidade = cidadeRepository.findByIdOptional(request.cidadeId())
+                .orElseThrow(() -> new RuntimeException("Cidade not found"));
+        EnderecoMapper.updateEntity(endereco, request, cidade);
+        return EnderecoMapper.toResponse(endereco);
     }
 
     @Transactional
     public void delete(Long id) {
-        boolean deleted = enderecoRepository.deleteById(id);
-        if (!deleted) {
-            throw new NotFoundException("Address not found");
-        }
-    }
-
-    public static class NotFoundException extends RuntimeException {
-        public NotFoundException(String message) {
-            super(message);
-        }
+        repository.deleteById(id);
     }
 }
+
