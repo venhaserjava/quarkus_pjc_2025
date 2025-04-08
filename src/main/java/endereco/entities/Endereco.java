@@ -1,5 +1,4 @@
 package endereco.entities;
-//package com.rossatti.quarkus_pjc_2025.entities;
 
 import cidade.entities.Cidade;
 import jakarta.persistence.*;

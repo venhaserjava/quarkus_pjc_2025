@@ -1,7 +1,7 @@
 package endereco.services;
-//package com.rossatti.quarkus_pjc_2025.endereco.services;
 
 import cidade.repositories.CidadeRepository;
+import commons.dtos.PagedResponseDTO;
 import endereco.dtos.EnderecoRequest;
 import endereco.dtos.EnderecoResponse;
 import endereco.entities.Endereco;
@@ -9,12 +9,8 @@ import endereco.mappers.EnderecoMapper;
 import endereco.repository.EnderecoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import io.quarkus.panache.common.Page;
 
-//import com.rossatti.quarkus_pjc_2025.endereco.dtos.*;
-//import com.rossatti.quarkus_pjc_2025.endereco.entities.Endereco;
-//import com.rossatti.quarkus_pjc_2025.endereco.mappers.EnderecoMapper;
-//import com.rossatti.quarkus_pjc_2025.endereco.repositories.EnderecoRepository;
-//import com.rossatti.quarkus_pjc_2025.cidade.repositories.CidadeRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,12 +35,25 @@ public class EnderecoService {
         return EnderecoMapper.toResponse(endereco);
     }
 
+    public PagedResponseDTO<EnderecoResponse> findAll(int page, int size) {
+        var query = repository.findAll().page(Page.of(page, size));
+
+        List<EnderecoResponse> content = query.list()
+                .stream()
+                .map(EnderecoMapper::toResponse)
+                .collect(Collectors.toList());
+
+        long totalElements = query.count();
+        return new PagedResponseDTO<>(content, page, size, totalElements);
+    }
+
+/*
     public List<EnderecoResponse> findAll() {
         return repository.listAll().stream()
                 .map(EnderecoMapper::toResponse)
                 .collect(Collectors.toList());
     }
-
+*/
     public EnderecoResponse findById(Long id) {
         return EnderecoMapper.toResponse(repository.findByIdOptional(id)
                 .orElseThrow(() -> new RuntimeException("Endereco not found")));

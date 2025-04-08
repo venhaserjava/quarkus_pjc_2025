@@ -1,6 +1,5 @@
 package endereco.dtos;
 
-//package com.rossatti.quarkus_pjc_2025.endereco.dtos;
 
 public record EnderecoResponse(
         Long id,

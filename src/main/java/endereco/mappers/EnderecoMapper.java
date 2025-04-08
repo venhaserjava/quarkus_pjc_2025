@@ -1,9 +1,5 @@
 package endereco.mappers;
 
-//package com.rossatti.quarkus_pjc_2025.endereco.mappers;
-//import com.rossatti.quarkus_pjc_2025.endereco.dtos.*;
-//import com.rossatti.quarkus_pjc_2025.endereco.entities.Endereco;
-//import com.rossatti.quarkus_pjc_2025.cidade.entities.Cidade;
 
 import cidade.entities.Cidade;
 import endereco.dtos.EnderecoRequest;

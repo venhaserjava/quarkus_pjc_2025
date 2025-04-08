@@ -1,6 +1,5 @@
 package endereco.resource;
 
-//package com.rossatti.quarkus_pjc_2025.endereco.resources;
 
 import endereco.dtos.EnderecoRequest;
 import endereco.dtos.EnderecoResponse;
@@ -9,9 +8,6 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
-
-//import com.rossatti.quarkus_pjc_2025.endereco.dtos.*;
-//import com.rossatti.quarkus_pjc_2025.endereco.services.EnderecoService;
 
 import java.util.List;
 
@@ -29,12 +25,17 @@ public class EnderecoResource {
                 .entity(service.create(request))
                 .build();
     }
-
+    @GET
+    public Response list(@QueryParam("page") @DefaultValue("0") int page,
+                         @QueryParam("size") @DefaultValue("10") int size) {
+        return Response.ok(service.findAll(page, size)).build();
+    }
+/*
     @GET
     public List<EnderecoResponse> list() {
         return service.findAll();
     }
-
+*/
     @GET
     @Path("/{id}")
     public EnderecoResponse findById(@PathParam("id") Long id) {
