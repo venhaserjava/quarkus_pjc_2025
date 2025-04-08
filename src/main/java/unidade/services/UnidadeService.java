@@ -1,50 +1,60 @@
 package unidade.services;
 
 //package com.rossatti.quarkus_pjc_2025.unidade.services;
-//import com.rossatti.quarkus_pjc_2025.unidade.entities.Unidade;
-//import com.rossatti.quarkus_pjc_2025.unidade.repositories.UnidadeRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import unidade.dtos.UnidadeRequest;
+import unidade.dtos.UnidadeResponse;
 import unidade.entities.Unidade;
+import unidade.mappers.UnidadeMapper;
 import unidade.repositories.UnidadeRepository;
 
+//import com.rossatti.quarkus_pjc_2025.unidade.dtos.*;
+//import com.rossatti.quarkus_pjc_2025.unidade.entities.Unidade;
+//import com.rossatti.quarkus_pjc_2025.unidade.mappers.UnidadeMapper;
+//import com.rossatti.quarkus_pjc_2025.unidade.repositories.UnidadeRepository;
+
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UnidadeService {
 
-    @Inject
-    UnidadeRepository repository;
+    private final UnidadeRepository repository;
 
-    public List<Unidade> findAll() {
-        return repository.listAll();
-    }
-
-    public Optional<Unidade> findById(Long id) {
-        return repository.findByIdOptional(id);
+    public UnidadeService(UnidadeRepository repository) {
+        this.repository = repository;
     }
 
     @Transactional
-    public Unidade create(Unidade unidade) {
+    public UnidadeResponse create(UnidadeRequest request) {
+        Unidade unidade = UnidadeMapper.toEntity(request);
         repository.persist(unidade);
-        return unidade;
+        return UnidadeMapper.toResponse(unidade);
+    }
+
+    public List<UnidadeResponse> findAll() {
+        return repository.listAll().stream()
+                .map(UnidadeMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public UnidadeResponse findById(Long id) {
+        return UnidadeMapper.toResponse(repository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Unidade not found")));
     }
 
     @Transactional
-    public Unidade update(Long id, Unidade unidadeData) {
-        Unidade unidade = repository.findById(id);
-        if (unidade == null) {
-            return null;
-        }
-        unidade.setNome(unidadeData.getNome());
-        unidade.setSigla(unidadeData.getSigla());
-        return unidade;
+    public UnidadeResponse update(Long id, UnidadeRequest request) {
+        Unidade unidade = repository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Unidade not found"));
+        UnidadeMapper.updateEntity(unidade, request);
+        return UnidadeMapper.toResponse(unidade);
     }
 
     @Transactional
-    public boolean delete(Long id) {
-        return repository.deleteById(id);
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 }
+

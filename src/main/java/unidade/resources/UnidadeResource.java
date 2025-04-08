@@ -1,15 +1,18 @@
 package unidade.resources;
 
+
 //package com.rossatti.quarkus_pjc_2025.unidade.resources;
-//import com.rossatti.quarkus_pjc_2025.unidade.entities.Unidade;
-//import com.rossatti.quarkus_pjc_2025.unidade.services.UnidadeService;
+
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import unidade.entities.Unidade;
+import jakarta.ws.rs.core.*;
+import unidade.dtos.UnidadeRequest;
+import unidade.dtos.UnidadeResponse;
 import unidade.services.UnidadeService;
+
+//import com.rossatti.quarkus_pjc_2025.unidade.dtos.*;
+//import com.rossatti.quarkus_pjc_2025.unidade.services.UnidadeService;
 
 import java.util.List;
 
@@ -21,43 +24,34 @@ public class UnidadeResource {
     @Inject
     UnidadeService service;
 
+    @POST
+    public Response create(@Valid UnidadeRequest request) {
+        return Response.status(Response.Status.CREATED)
+                .entity(service.create(request))
+                .build();
+    }
+
     @GET
-    public List<Unidade> findAll() {
+    public List<UnidadeResponse> list() {
         return service.findAll();
     }
 
     @GET
     @Path("/{id}")
-    public Response findById(@PathParam("id") Long id) {
-        return service.findById(id)
-                .map(Response::ok)
-                .orElse(Response.status(Response.Status.NOT_FOUND))
-                .build();
-    }
-
-    @POST
-    @Transactional
-    public Response create(Unidade unidade) {
-        Unidade created = service.create(unidade);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+    public UnidadeResponse findById(@PathParam("id") Long id) {
+        return service.findById(id);
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
-    public Response update(@PathParam("id") Long id, Unidade unidade) {
-        Unidade updated = service.update(id, unidade);
-        if (updated == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(updated).build();
+    public UnidadeResponse update(@PathParam("id") Long id, @Valid UnidadeRequest request) {
+        return service.update(id, request);
     }
 
     @DELETE
     @Path("/{id}")
-    @Transactional
     public Response delete(@PathParam("id") Long id) {
-        boolean deleted = service.delete(id);
-        return deleted ? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();
+        service.delete(id);
+        return Response.noContent().build();
     }
 }
