@@ -1,6 +1,5 @@
 package lotacao.dtos.request;
 
-package lotacao.dtos;
 
 import jakarta.validation.constraints.*;
 import lotacao.validators.ValidLotacaoDate;
