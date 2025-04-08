@@ -1,11 +1,14 @@
 package pessoa.entities;
 
-//package com.rossatti.quarkus_pjc_2025.pessoa.entities;
-
+import endereco.entities.Endereco;
+import lotacao.entities.Lotacao;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -41,4 +44,16 @@ public class Pessoa {
 
     @Column(name = "pes_sexo", nullable = false, length = 10)
     private String sexo;
+
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Lotacao> lotacoes;
+
+    @ManyToMany
+    @JoinTable(
+            name = "pessoa_endereco",
+            joinColumns = @JoinColumn(name = "pes_id"),
+            inverseJoinColumns = @JoinColumn(name = "end_id")
+    )
+    @Builder.Default
+    private Set<Endereco> enderecos = new HashSet<>();
 }
