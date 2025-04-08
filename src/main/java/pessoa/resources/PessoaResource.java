@@ -1,9 +1,5 @@
 package pessoa.resources;
 
-//package com.rossatti.quarkus_pjc_2025.pessoa.resources;
-//import com.rossatti.quarkus_pjc_2025.pessoa.dtos.PessoaRequest;
-//import com.rossatti.quarkus_pjc_2025.pessoa.dtos.PessoaResponse;
-//import com.rossatti.quarkus_pjc_2025.pessoa.services.PessoaService;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

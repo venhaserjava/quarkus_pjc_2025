@@ -5,6 +5,7 @@ import cidade.dtos.CidadeResponse;
 import cidade.entities.Cidade;
 import cidade.mappers.CidadeMapper;
 import cidade.repositories.CidadeRepository;
+import commons.dtos.PagedResponseDTO;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,19 @@ public class CidadeService {
         return CidadeMapper.toResponse(cidade);
     }
 
+    public PagedResponseDTO<CidadeResponse> findAll(int page, int size) {
+        Page pageRequest = Page.of(page, size);
+        var query = cidadeRepository.findAllCities(page,size).page(pageRequest);
+        List<CidadeResponse> content = query.list()
+                .stream()
+                .map(CidadeMapper::toResponse)
+                .collect(Collectors.toList());
+
+        long totalElements = query.count();
+        return new PagedResponseDTO<>(content, page, size, totalElements);
+    }
+
+/*
     public List<CidadeResponse> findAll(int page, int size) {
         //return cidadeRepository.findAll(Page.of(page, size))
         return cidadeRepository.findAll(page,size)
@@ -34,7 +48,7 @@ public class CidadeService {
                 .map(CidadeMapper::toResponse)
                 .collect(Collectors.toList());
     }
-
+*/
     public CidadeResponse findById(Long id) {
         Cidade cidade = cidadeRepository.findByIdOptional(id)
                 .orElseThrow(() -> new NotFoundException("Cidade não encontrada com o ID: " + id));
@@ -56,7 +70,8 @@ public class CidadeService {
                 .orElseThrow(() -> new NotFoundException("Cidade não encontrada com o ID: " + id));
         cidadeRepository.delete(cidade);
     }
-}/*
+}
+/*
 import cidade.dtos.CidadeRequest;
 import cidade.dtos.CidadeResponse;
 import cidade.entities.Cidade;

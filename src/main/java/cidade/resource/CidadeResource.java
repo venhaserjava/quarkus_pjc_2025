@@ -27,10 +27,18 @@ public class CidadeResource {
     }
 
     @GET
+    public Response list(@QueryParam("page") @DefaultValue("0") int page,
+                         @QueryParam("size") @DefaultValue("10") int size) {
+        return Response.ok(service.findAll(page, size)).build();
+    }
+
+/*
+    @GET
     public List<CidadeResponse> list(@QueryParam("page") @DefaultValue("0") int page,
                                      @QueryParam("size") @DefaultValue("10") int size) {
         return service.findAll(page, size);
     }
+*/
 //    public List<CidadeResponse> list() {
 //        return service.findAll();
 //    }
