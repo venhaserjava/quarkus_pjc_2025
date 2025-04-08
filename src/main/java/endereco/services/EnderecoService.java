@@ -6,7 +6,7 @@ import endereco.dtos.EnderecoRequest;
 import endereco.dtos.EnderecoResponse;
 import endereco.entities.Endereco;
 import endereco.mappers.EnderecoMapper;
-import endereco.repository.EnderecoRepository;
+import endereco.repositories.EnderecoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import io.quarkus.panache.common.Page;

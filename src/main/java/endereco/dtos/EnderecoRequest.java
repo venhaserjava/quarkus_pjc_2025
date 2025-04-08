@@ -1,7 +1,9 @@
 package endereco.dtos;
 
+import endereco.validators.UniqueEndereco;
 import jakarta.validation.constraints.*;
 
+@UniqueEndereco
 public record EnderecoRequest(
         @NotBlank @Size(max = 50)
         String tipoLogradouro,
