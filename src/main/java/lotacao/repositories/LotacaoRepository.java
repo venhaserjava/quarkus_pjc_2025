@@ -32,4 +32,13 @@ public class LotacaoRepository implements PanacheRepository<Lotacao> {
                 .getResultList();
     }
 
+    
+    public List<Lotacao> findByUnidadeId(Long unidadeId, int page, int size) {
+        return find("unidade.id", unidadeId)
+               .page(page, size)
+               .list();
+    }
+
+    
+
 }

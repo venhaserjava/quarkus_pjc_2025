@@ -14,12 +14,15 @@ import servidor_efetivo.entities.ServidorEfetivo;
 import servidor_efetivo.repositories.ServidorEfetivoRepository;
 import unidade.entities.Unidade;
 import unidade.repositories.UnidadeRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ServidorEfetivoService {
@@ -87,6 +90,38 @@ public class ServidorEfetivoService {
                 dto.portaria()
         );
     }
+    
+    public List<ServidorEfetivoResponseDTO> listarPorUnidade(Long unidadeId, int page, int size) {
+        List<Lotacao> lotacoes = lotacaoRepository.findByUnidadeId(unidadeId, page, size);
+        List<Long> pessoaIds = lotacoes.stream()
+                .map(l -> l.getPessoa().getId())
+                .toList();
+
+        // Buscar todos os servidores efetivos em lote
+        Map<Long, ServidorEfetivo> servidoresMap = servidorEfetivoRepository
+                .findByPessoaIdIn(pessoaIds)
+                .stream()
+                .collect(Collectors.toMap(se -> se.getPessoa().getId(), se -> se));
+
+        return lotacoes.stream()
+                .map(lotacao -> {
+                    ServidorEfetivo se = servidoresMap.get(lotacao.getPessoa().getId());
+                    if (se == null) {
+                        throw new WebApplicationException("Servidor efetivo não encontrado para pessoa ID " + lotacao.getPessoa().getId(), Response.Status.NOT_FOUND);
+                    }
+                    return new ServidorEfetivoResponseDTO(
+                            se.getId(),
+                            lotacao.getPessoa().getNome(),
+                            calcularIdade(lotacao.getPessoa().getDataNascimento()),
+                            se.getMatricula(),
+                            lotacao.getUnidade().getNome(),
+                            lotacao.getDataLotacao(),
+                            lotacao.getPortaria()
+                    );
+                }).toList();
+    }
+
+
 
     private int calcularIdade(LocalDate dataNascimento) {
         return Period.between(dataNascimento, LocalDate.now()).getYears();

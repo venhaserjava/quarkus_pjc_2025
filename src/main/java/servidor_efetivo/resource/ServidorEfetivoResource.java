@@ -25,4 +25,14 @@ public class ServidorEfetivoResource {
         ServidorEfetivoResponseDTO criado = service.criar(dto);
         return Response.ok(criado).status(Response.Status.CREATED).build();
     }
+    
+    @GET
+    @Path("/unidade/{id}")
+    public Response listarPorUnidade(@PathParam("id") Long unidadeId,
+                                      @QueryParam("page") @DefaultValue("0") int page,
+                                      @QueryParam("size") @DefaultValue("10") int size) {
+        var lista = service.listarPorUnidade(unidadeId, page, size);
+        return Response.ok(lista).build();
+    }    
+
 }
