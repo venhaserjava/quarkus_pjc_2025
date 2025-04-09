@@ -1,10 +1,12 @@
 package unidade.mappers;
 
 import endereco.entities.Endereco;
+import jakarta.enterprise.context.ApplicationScoped;
 import unidade.dtos.UnidadeRequest;
 import unidade.dtos.UnidadeResponse;
 import unidade.entities.Unidade;
 
+@ApplicationScoped
 public class UnidadeMapper {
 
     public static Unidade toEntity(UnidadeRequest request) {
