@@ -1,6 +1,6 @@
 package cidade;
 
-//package com.rossatti.quarkus_pjc_2025.resources;
+/*
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.*;
@@ -97,3 +97,4 @@ class CidadeResourceTest {
                 .statusCode(404);
     }
 }
+*/

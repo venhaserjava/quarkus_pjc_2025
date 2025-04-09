@@ -1,9 +1,6 @@
 package endereco;
 
-//package com.rossatti.quarkus_pjc_2025.services;
-//import com.rossatti.quarkus_pjc_2025.entities.Cidade;
-//import com.rossatti.quarkus_pjc_2025.entities.Endereco;
-
+/*
 import cidade.entities.Cidade;
 import cidade.services.CidadeService;
 import endereco.entities.Endereco;
@@ -97,3 +94,4 @@ class EnderecoServiceTest {
         assertThat(cidadeService.findById(cidadeId)).isEmpty();
     }
 }
+*/

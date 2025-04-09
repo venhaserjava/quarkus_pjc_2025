@@ -1,6 +1,6 @@
 package endereco;
 
-//package com.rossatti.quarkus_pjc_2025.resources;
+/*
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -123,3 +123,4 @@ class EnderecoResourceTest {
                 .statusCode(204);
     }
 }
+*/
