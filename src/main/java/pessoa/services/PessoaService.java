@@ -49,6 +49,22 @@ public class PessoaService {
                 .map(PessoaMapper::toResponse);
     }
 
+    public List<PessoaResponse> findPeople(String nome, int page, int size) {
+        Page panachePage = Page.of(page, size);
+
+        List<Pessoa> pessoas;
+
+        if (nome == null || nome.isBlank()) {
+            pessoas = repository.findAll().page(panachePage).list();
+        } else {
+            pessoas = repository.find("LOWER(nome) LIKE ?1", "%" + nome.toLowerCase() + "%")
+                    .page(panachePage)
+                    .list();
+        }
+
+        return pessoas.stream().map(PessoaMapper::toResponse).toList();
+    }
+
     @Transactional
     public PessoaResponse create(PessoaRequest request) {
         Pessoa pessoa = PessoaMapper.toEntity(request);

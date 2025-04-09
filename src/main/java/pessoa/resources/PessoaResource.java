@@ -21,10 +21,11 @@ public class PessoaResource {
     @Inject
     PessoaService service;
 
-    @GET
-    public List<PessoaResponse> listAll() {
-        return service.listAll();
-    }
+//
+//    @GET
+//    public List<PessoaResponse> listAll() {
+//        return service.listAll();
+//    }
 
     @GET
     @Path("/{id}")
@@ -33,6 +34,13 @@ public class PessoaResource {
                 .map(Response::ok)
                 .orElse(Response.status(Response.Status.NOT_FOUND))
                 .build();
+    }
+
+    @GET
+    public Response findPeople(@QueryParam("q") String nome,
+                               @QueryParam("page") @DefaultValue("0") int page,
+                               @QueryParam("size") @DefaultValue("10") int size) {
+        return Response.ok(service.findPeople(nome, page, size)).build();
     }
 
     @POST
