@@ -16,15 +16,16 @@ public class CidadeRepository implements PanacheRepository<Cidade> {
     public boolean existsByNomeAndUf(String nome, String uf) {
         return find("nome = ?1 and uf = ?2", nome, uf).firstResultOptional().isPresent();
     }
+    public Cidade findByNomeAndUf(String nome, String uf) {
+        return find("nome = ?1 and uf = ?2", nome, uf).firstResult();
+    }
+
 //    public PanacheQuery<Cidade> findAll(int page, int size) {
 //        return findAll(page, size);
 //        return findAll(Page.of(page, size));
 //    }
     // Métodos específicos para Cidade podem ser adicionados aqui, se necessário.
     // Exemplo:
-    // public Cidade findByNomeAndUf(String nome, String uf) {
-    //     return find("nome = ?1 and uf = ?2", nome, uf).firstResult();
-    // }
 }
 //import cidade.entities.Cidade;
 //import io.quarkus.hibernate.orm.panache.PanacheRepository;
