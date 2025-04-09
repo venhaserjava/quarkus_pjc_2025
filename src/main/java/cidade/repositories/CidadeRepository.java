@@ -6,6 +6,8 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
+import java.util.Optional;
+
 @ApplicationScoped
 public class CidadeRepository implements PanacheRepository<Cidade> {
 
@@ -16,19 +18,8 @@ public class CidadeRepository implements PanacheRepository<Cidade> {
     public boolean existsByNomeAndUf(String nome, String uf) {
         return find("nome = ?1 and uf = ?2", nome, uf).firstResultOptional().isPresent();
     }
-    public Cidade findByNomeAndUf(String nome, String uf) {
-        return find("nome = ?1 and uf = ?2", nome, uf).firstResult();
+    public Optional<Cidade> findByNomeAndUf(String nome, String uf) {
+        return find("nome = ?1 and uf = ?2", nome, uf).firstResultOptional();
     }
 
-//    public PanacheQuery<Cidade> findAll(int page, int size) {
-//        return findAll(page, size);
-//        return findAll(Page.of(page, size));
-//    }
-    // Métodos específicos para Cidade podem ser adicionados aqui, se necessário.
-    // Exemplo:
 }
-//import cidade.entities.Cidade;
-//import io.quarkus.hibernate.orm.panache.PanacheRepository;
-//
-//public class CidadeRepository implements PanacheRepository<Cidade> {
-//}

@@ -41,30 +41,30 @@ public class UnidadeService {
     @Transactional
     public UnidadeResponse create(UnidadeRequest request) {
         var dtoEndereco = request.getEnderecos().iterator().next();
-        var cidadeDto = dtoEndereco.getCidade();
+        var cidadeDto = dtoEndereco.cidade();
 
-        var cidade = cidadeRepository.findByNomeAndUf(cidadeDto.getNome(), cidadeDto.getUf())
+        var cidade = cidadeRepository.findByNomeAndUf(cidadeDto.nome(), cidadeDto.uf())
                 .orElseGet(() -> {
                     var nova = new Cidade();
-                    nova.setNome(cidadeDto.getNome());
-                    nova.setUf(cidadeDto.getUf());
+                    nova.setNome(cidadeDto.nome());
+                    nova.setUf(cidadeDto.uf());
                     cidadeRepository.persist(nova);
                     return nova;
                 });
 
-        var endereco = enderecoRepository.find(
+        var endereco = enderecoRepository.findByTipoLogradouroAndLogradouroAndNumeroAndBairroAndCidadeId(
                 "tipoLogradouro = ?1 and logradouro = ?2 and numero = ?3 and bairro = ?4 and cidade.id = ?5",
-                dtoEndereco.getTipoLogradouro(),
-                dtoEndereco.getLogradouro(),
-                dtoEndereco.getNumero(),
-                dtoEndereco.getBairro(),
+                dtoEndereco.tipoLogradouro(),
+                dtoEndereco.logradouro(),
+                dtoEndereco.numero(),
+                dtoEndereco.bairro(),
                 cidade.getId()
-        ).firstResultOptional().orElseGet(() -> {
+        ).orElseGet(() -> {
             var novo = Endereco.builder()
-                    .tipoLogradouro(dtoEndereco.getTipoLogradouro())
-                    .logradouro(dtoEndereco.getLogradouro())
-                    .numero(dtoEndereco.getNumero())
-                    .bairro(dtoEndereco.getBairro())
+                    .tipoLogradouro(dtoEndereco.tipoLogradouro())
+                    .logradouro(dtoEndereco.logradouro())
+                    .numero(dtoEndereco.numero())
+                    .bairro(dtoEndereco.bairro())
                     .cidade(cidade)
                     .build();
             enderecoRepository.persist(novo);
@@ -84,7 +84,42 @@ public class UnidadeService {
 
         return unidadeMapper.toResponse(unidade);
     }
+    public PagedResponseDTO<UnidadeResponse> findAll(int page, int size) {
+        var query = unidadeRepository.findAll().page(Page.of(page, size));
+        List<Unidade> unidades = query.list();
 
+        List<UnidadeResponse> content = unidades.stream()
+                .map(unidade -> {
+                    Endereco endereco = unidadeEnderecoRepository.findEnderecoByUnidade(unidade);
+                    return UnidadeMapper.toResponse(unidade);
+                })
+                .collect(Collectors.toList());
+
+        long totalElements = unidadeRepository.count();
+
+        return new PagedResponseDTO<>(content, page, size, totalElements);
+    }
+    public UnidadeResponse findById(Long id) {
+        Unidade unidade = unidadeRepository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Unidade não encontrada"));
+
+        Endereco endereco = unidadeEnderecoRepository.findEnderecoByUnidade(unidade);
+
+        return UnidadeMapper.toResponse(unidade);
+    }
+    @Transactional
+    public UnidadeResponse update(Long id, UnidadeRequest request) {
+        Unidade unidade = unidadeRepository.findByIdOptional(id)
+                .orElseThrow(() -> new RuntimeException("Unidade não encontrada"));
+
+        unidade.setNome(request.getNome());
+        unidade.setSigla(request.getSigla());
+        unidadeRepository.persist(unidade);
+        return UnidadeMapper.toResponse(unidade);
+    }
+
+
+    /*
     public PagedResponseDTO<UnidadeResponse> findAll(int page, int size) {
         var query = unidadeRepository.findAll().page(Page.of(page, size));
         List<UnidadeResponse> content = query.list().stream()
@@ -109,7 +144,7 @@ public class UnidadeService {
         UnidadeMapper.updateEntity(unidade, request);
         return unidadeMapper.toResponse(unidade);
     }
-
+*/
     @Transactional
     public void delete(Long id) {
         unidadeRepository.deleteById(id);
