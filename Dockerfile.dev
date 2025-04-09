@@ -1,0 +1,13 @@
+# Dockerfile.dev
+FROM maven:3.9-eclipse-temurin-21-alpine AS dev
+
+WORKDIR /app
+
+# Copia o projeto inteiro
+COPY . .
+
+# Expõe a porta de dev
+EXPOSE 8080
+
+# Roda a aplicação em modo dev
+CMD ["./mvnw", "quarkus:dev"]
