@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import lotacao.dtos.request.LotacaoRequest;
+import lotacao.dtos.response.EnderecoFuncionalResponse;
 import lotacao.dtos.response.LotacaoResponse;
 import lotacao.entities.Lotacao;
 import lotacao.mappers.LotacaoMapper;
@@ -54,4 +55,23 @@ public class LotacaoService {
         List<LotacaoResponse> content = query.list().stream().map(mapper::toResponse).collect(Collectors.toList());
         return new PagedResponseDTO<>(content, page, size, query.count());
     }
+
+    public List<EnderecoFuncionalResponse> buscarEnderecoFuncionalPorNome(String nome) {
+        return lotacaoRepository.buscarPorPessoaNome(nome).stream().map(lotacao -> {
+            var unidade = lotacao.getUnidade();
+            var unidadeEndereco = unidade.getUnidadeEndereco();
+            var endereco = unidadeEndereco != null ? unidadeEndereco.getEndereco() : null;
+
+            return new EnderecoFuncionalResponse(
+                    lotacao.getPessoa().getNome(),
+                    unidade.getNome(),
+                    endereco != null ? endereco.getLogradouro() : "Não informado",
+                    endereco != null ? endereco.getNumero() : 0,
+                    endereco != null ? endereco.getBairro() : "Não informado",
+                    endereco != null ? endereco.getCidade().getNome() : "Não informado",
+                    endereco != null ? endereco.getCidade().getUf() : "Não informado"
+            );
+        }).toList();
+    }
+
 }
