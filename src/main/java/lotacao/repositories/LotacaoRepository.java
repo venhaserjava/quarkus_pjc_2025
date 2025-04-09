@@ -17,4 +17,19 @@ public class LotacaoRepository implements PanacheRepository<Lotacao> {
     public long countByUnidadeId(Long unidadeId) {
         return count("unidade.id", unidadeId);
     }
+
+    public List<Lotacao> buscarPorPessoaNome(String nome) {
+        return getEntityManager().createQuery("""
+            SELECT l FROM Lotacao l
+            JOIN FETCH l.pessoa p
+            JOIN FETCH l.unidade u
+            JOIN FETCH u.unidadeEndereco ue
+            JOIN FETCH ue.endereco e
+            JOIN FETCH e.cidade c
+            WHERE LOWER(p.nome) LIKE LOWER(CONCAT('%', :nome, '%'))
+        """, Lotacao.class)
+                .setParameter("nome", nome)
+                .getResultList();
+    }
+
 }
