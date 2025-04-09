@@ -6,10 +6,10 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import pessoa_foto.dtos.FotoUploadForm;
 import pessoa_foto.services.PessoaFotoService;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.List;
 
 @Path("/api/foto_pessoa")
@@ -23,33 +23,29 @@ public class PessoaFotoResource {
     @Inject
     MinioClient minioClient;
 
-    private static final String BUCKET_NAME = "fotos";
+    private static final String BUCKET_NAME = "quarkus-fotos";
 
     @POST
     @Path("/upload")
-    public Response upload(@FormParam("file") InputStream fileInputStream,
-                           @FormParam("file") @HeaderParam("Content-Length") long size,
-                           @FormParam("file") @HeaderParam("Content-Type") String contentType,
-                           @FormParam("pessoaId") Long pessoaId) {
+    public Response upload(FotoUploadForm form) {
         try {
-            byte[] fileBytes = fileInputStream.readAllBytes();
+            byte[] fileBytes = form.file.readAllBytes();
             String hash = service.generateHash(fileBytes);
             String fileName = hash + ".png";
 
-            boolean exists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(BUCKET_NAME).build());
-            if (!exists) {
+            if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(BUCKET_NAME).build())) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(BUCKET_NAME).build());
             }
 
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(BUCKET_NAME)
                     .object(fileName)
-                    .stream(new ByteArrayInputStream(fileBytes), size, -1)
-                    .contentType(contentType)
+                    .stream(new ByteArrayInputStream(fileBytes), fileBytes.length, -1)
+                    .contentType("image/png")
                     .build());
 
-            service.saveFoto(pessoaId, hash);
-            String url = gerarLinkTemporario(hash).toString();
+            service.saveFoto(form.pessoaId, hash);
+            String url = gerarLinkTemporarioInterno(hash);
             return Response.ok("Foto salva com sucesso. Link: " + url).build();
 
         } catch (Exception e) {
@@ -68,15 +64,19 @@ public class PessoaFotoResource {
     @Path("/link/{hash}")
     public Response gerarLinkTemporario(@PathParam("hash") String hash) {
         try {
-            String url = minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
-                    .method(Method.GET)
-                    .bucket(BUCKET_NAME)
-                    .object(hash + ".png")
-                    .expiry(300)
-                    .build());
+            String url = gerarLinkTemporarioInterno(hash);
             return Response.ok(url).build();
         } catch (Exception e) {
             return Response.serverError().entity("Erro ao gerar link: " + e.getMessage()).build();
         }
+    }
+
+    private String gerarLinkTemporarioInterno(String hash) throws Exception {
+        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                .method(Method.GET)
+                .bucket(BUCKET_NAME)
+                .object(hash + ".png")
+                .expiry(300)
+                .build());
     }
 }
