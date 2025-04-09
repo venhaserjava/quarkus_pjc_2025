@@ -34,4 +34,11 @@ public class LotacaoResource {
                          @QueryParam("size") @DefaultValue("10") int size) {
         return Response.ok(service.findAll(page, size)).build();
     }
+    @GET
+    @Path("/funcional")
+    public Response buscarEnderecoFuncional(@QueryParam("nome") String nome) {
+        var resultado = service.buscarEnderecoFuncionalPorNome(nome);
+        return Response.ok(resultado).build();
+    }
+
 }

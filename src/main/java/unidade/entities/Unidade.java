@@ -31,4 +31,8 @@ public class Unidade {
 
     @Column(name = "unid_sigla", nullable = false, length = 20)
     private String sigla;
+
+    @OneToOne(mappedBy = "unidade", cascade = CascadeType.ALL)
+    private UnidadeEndereco unidadeEndereco;
+
 }
