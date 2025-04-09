@@ -11,8 +11,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class EnderecoRepository implements PanacheRepository<Endereco> {
 
-    //existsByLogradouroNumeroBairroCidade
-                //
+
     public Optional<Endereco> findByTipoLogradouroAndLogradouroAndNumeroAndBairroAndCidadeId(
             String tipoLogradouro,
             String logradouro,
@@ -23,4 +22,12 @@ public class EnderecoRepository implements PanacheRepository<Endereco> {
         return find("tipoLogradouro = ?1 and  logradouro = ?2 and numero = ?3 and bairro = ?4 and cidade.id = ?5",
                 tipoLogradouro,logradouro, numero, bairro, cidadeId).firstResultOptional();
     }
+
+    public boolean existsByLogradouroNumeroBairroCidade(String logradouro, Integer numero, String bairro, Long cidadeId) {
+        return find("logradouro = ?1 and numero = ?2 and bairro = ?3 and cidade.id = ?4",
+                logradouro, numero, bairro, cidadeId)
+                .firstResultOptional()
+                .isPresent();
+    }
+
 }

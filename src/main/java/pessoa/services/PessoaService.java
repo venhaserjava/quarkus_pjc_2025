@@ -16,7 +16,9 @@ import pessoa.dtos.PessoaResponse;
 import pessoa.entities.Pessoa;
 import pessoa.mappers.PessoaMapper;
 import pessoa.repositories.PessoaRepository;
-import io.quarkus.hibernate.orm.panache.common.Page;
+//import io.quarkus.hibernate.orm.panache.common.Page;
+import io.quarkus.panache.common.Page;
+
 
 
 import java.util.List;
@@ -29,7 +31,8 @@ public class PessoaService {
     PessoaRepository repository;
 
     public PagedResponseDTO<PessoaResponse> listAllPaged(int page, int size) {
-        var panachePage = io.quarkus.hibernate.orm.panache.common.Page.of(page, size);
+//        var panachePage = io.quarkus.hibernate.orm.panache.common.Page.of(page, size);
+        var panachePage = Page.of(page, size);
         var query = repository.findAll().page(panachePage);
 
         List<PessoaResponse> content = query.list()

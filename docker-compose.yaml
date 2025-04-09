@@ -6,7 +6,7 @@ services:
     container_name: postgres_db
     restart: always
     environment:
-      POSTGRES_DB: spring_pjc_2025_db
+      POSTGRES_DB: quarkus_pjc_2025_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root_pwd
     ports:
