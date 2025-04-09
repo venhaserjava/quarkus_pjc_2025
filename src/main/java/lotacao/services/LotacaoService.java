@@ -1,6 +1,5 @@
 package lotacao.services;
 
-
 import commons.dtos.PagedResponseDTO;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;

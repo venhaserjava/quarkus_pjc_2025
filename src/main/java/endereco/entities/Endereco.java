@@ -3,6 +3,9 @@ package endereco.entities;
 import cidade.entities.Cidade;
 import jakarta.persistence.*;
 import lombok.*;
+import unidade.entities.UnidadeEndereco;
+
+import java.util.Set;
 
 @Data
 @Entity
@@ -41,4 +44,8 @@ public class Endereco {
     @JoinColumn(name = "cid_id", referencedColumnName = "cid_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_endereco_cidade"))
     private Cidade cidade;
+
+    @OneToMany(mappedBy = "endereco")
+    private Set<UnidadeEndereco> unidadeEnderecos;
+
 }
