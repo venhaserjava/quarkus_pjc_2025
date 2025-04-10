@@ -71,7 +71,7 @@ Este projeto foi desenvolvido para a banca examinadora do processo seletivo:
 ```
 
 ## 📚 Documentação da API
-Toda a documentação dos endpoints está disponível no arquivo api-docs.md.
+Toda a documentação dos endpoints está disponível no arquivo [`api-docs.md`](./api-docs.md)
 
 Se estiver usando Quarkus com OpenAPI, acesse:
 

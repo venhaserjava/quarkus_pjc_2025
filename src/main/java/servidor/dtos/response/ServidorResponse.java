@@ -8,7 +8,7 @@ public record ServidorResponse(
         String mae,
         String pai,
         String sexo,
-        LocalDate dataNascimento,
+//        LocalDate dataNascimento,
         String tipoLogradouro,
         String logradouro,
         Integer numero,
@@ -18,7 +18,8 @@ public record ServidorResponse(
 ) {
     public ServidorResponse withFoto(String fotoUrl) {
         return new ServidorResponse(
-                id, nome, mae, pai, sexo, dataNascimento,
+                id, nome, mae, pai, sexo,
+//                dataNascimento,
                 tipoLogradouro, logradouro, numero, bairro,
                 cidadeNome, fotoUrl
         );

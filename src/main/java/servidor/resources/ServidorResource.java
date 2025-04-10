@@ -7,6 +7,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pessoa.entities.Pessoa;
 import pessoa_foto.services.PessoaFotoService;
 import servidor.dtos.request.ServidorComFotoForm;
@@ -21,6 +23,8 @@ import java.io.ByteArrayInputStream;
 @Consumes(MediaType.MULTIPART_FORM_DATA)
 @Produces(MediaType.APPLICATION_JSON)
 public class ServidorResource {
+
+    private static final Logger log = LoggerFactory.getLogger(ServidorResource.class);
 
     @Inject ServidorService servidorService;
     @Inject PessoaFotoService pessoaFotoService;

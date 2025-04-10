@@ -14,7 +14,7 @@ public class ServidorMapper {
                 pessoa.getMae(),
                 pessoa.getPai(),
                 pessoa.getSexo(),
-                pessoa.getDataNascimento(),
+//                pessoa.getDataNascimento(),
                 endereco.getTipoLogradouro(),
                 endereco.getLogradouro(),
                 endereco.getNumero(),
@@ -23,7 +23,16 @@ public class ServidorMapper {
                 null // link da foto será preenchido depois
         );
     }
-
+    public static Pessoa toEntity(ServidorRequest request)    {
+        return Pessoa.builder()
+                .nome(request.getNome())
+                .mae(request.getMae())
+                .pai(request.getPai())
+                .sexo(request.getSexo())
+//                .dataNascimento(request.getDataNascimento())
+                .build();
+    }
+    /*
     public static Pessoa toEntity(ServidorRequest request) {
         return Pessoa.builder()
                 .nome(request.nome())
@@ -33,4 +42,6 @@ public class ServidorMapper {
                 .dataNascimento(request.dataNascimento())
                 .build();
     }
+
+     */
 }

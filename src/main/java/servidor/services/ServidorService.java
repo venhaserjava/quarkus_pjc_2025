@@ -24,7 +24,8 @@ public class ServidorService {
 
     @Transactional
     public Pessoa createServidor(ServidorRequest request) {
-        var enderecoDto = request.enderecos().iterator().next();
+//        var enderecoDto = request.enderecos().iterator().next();
+        var enderecoDto = request.getEnderecos().iterator().next();
         var cidadeDto = enderecoDto.cidade();
 
         // CIDADE
@@ -55,8 +56,20 @@ public class ServidorService {
                 });
 
         // PESSOA
-        var pessoa = pessoaRepository.find("nome = ?1 and mae = ?2 and dataNascimento = ?3",
-                        request.nome(), request.mae(), request.dataNascimento())
+//        var pessoa = pessoaRepository.find("nome = ?1 and mae = ?2 and dataNascimento = ?3",
+//                        //         request.nome(), request.mae(), request.dataNascimento())
+//                        request.getNome(),
+//                        request.getMae(), request.getDataNascimento())
+//                .firstResultOptional()
+//                .orElseGet(() -> {
+//                    var nova = ServidorMapper.toEntity(request);
+//                    pessoaRepository.persist(nova);
+//                    return nova;
+//                });
+        var pessoa = pessoaRepository.find("nome = ?1 and mae = ?2",
+                        //         request.nome(), request.mae(), request.dataNascimento())
+                        request.getNome(),
+                        request.getMae())
                 .firstResultOptional()
                 .orElseGet(() -> {
                     var nova = ServidorMapper.toEntity(request);
